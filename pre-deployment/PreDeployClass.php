@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 // Set default time zone. 
 // List here: http://www.php.net/manual/en/timezones.america.php
@@ -67,7 +67,7 @@ class PreDeploy {
 	*/
 	public function __construct($options = array()) {
 
-		$available_options = array('hosted_repo_dir', 'website_dir', 'git_dir', 'logfiles_dir', 'log', 'date_format');
+		$available_options = array('hosted_repo_dir', 'website_dir', 'git_dir', 'logfiles_dir', 'log', 'date_format', 'deploy_class', 'deploy_logfiles_dir');
 
 		foreach ($options as $option => $value) {
 			if (in_array($option, $available_options)) {
@@ -286,6 +286,10 @@ class PreDeploy {
 		if ( file_exists( $this->_website_dir . DIRECTORY_SEPARATOR . basename(__FILE__) ) ) {
 
 			$this->log('Pre-deployment preparation process successfully completed...');
+
+			// Remove the pre-deploy.php script that called this Class
+			exec('rm -rf ' . $this->_website_dir . DIRECTORY_SEPARATOR . 'pre-deploy.php' );
+
 			$this->log('Self Destructing...');
 			$this->log('---------------------------', 'COMPLETE');
 
@@ -359,6 +363,73 @@ class PreDeploy {
 	}
 
 	/**
+	* Sets up DeployClass.php in specified directory
+	*/
+	public function setup_deploy_class() {
+
+		$this->log('Setting up DeployClass.php...');
+
+		// Create path and name of new file
+		$local_deploy_file = $this->_deploy_logfiles_dir . DIRECTORY_SEPARATOR . basename($this->_deploy_class);
+
+		// see if $this->_deploy_logfiles_dir directory already exists
+		if ( file_exists($this->_deploy_logfiles_dir) && is_dir($this->_deploy_logfiles_dir) ) {
+
+			// if DeployClass.php file doesn't already exist in this location, 
+			// 	download it
+			if ( ! file_exists($local_deploy_file) ) {
+				
+				// Then download the correct file into it
+				$this->downloadFile( $this->_deploy_class, $local_deploy_file );
+				$this->log('Downloading DeployClass.php...');
+
+			} else {
+				$this->log('DeployClass.php already exists in proper location...');
+			}
+			
+		} else {
+			// Directory doesn't yet exist, make it
+			mkdir($this->_deploy_logfiles_dir);
+			$this->log('Creating deployment logfiles directory...');
+
+			// Then download the correct file into it
+			$this->downloadFile( $this->_deploy_class, $local_deploy_file );
+			$this->log('Downloading DeployClass.php...');
+		}
+
+		$this->log('DeployClass.php successfully set up...');
+	}
+
+	/**
+	* Function for downloading a file from a specific URL - taken from 
+	*  http://stackoverflow.com/questions/3938534/download-file-to-server-from-url
+	*/
+	private function downloadFile ($url, $path) {
+
+		$newfname = $path;
+		$file = fopen ($url, "rb");
+		
+		if ($file) {
+
+			$newf = fopen ($newfname, "wb");
+
+			if ($newf) {
+				while(!feof($file)) {
+						fwrite($newf, fread($file, 1024 * 8 ), 1024 * 8 );	
+				}
+			}
+		}
+
+		if ($file) {
+			fclose($file);
+		}
+
+		if ($newf) {
+			fclose($newf);
+		}
+	}
+
+	/**
 	* Get the name of the local .git repo directory - defaults to reponame.git
 	*/
 	private function get_local_git_repo_name() {
@@ -383,24 +454,4 @@ class PreDeploy {
 
 	}
 
-}
-
-// This is just an example
-$pre_deploy_options = array(
-		'hosted_repo_dir' 	=> 'git@bitbucket.org:oreganocreative/oregano-website.git',
-		'website_dir' 		=> '/home/oregano/public_html',
-		'git_dir' 			=> '/home/oregano/git_repos',
-		'logfiles_dir'		=> '/home/oregano/pre-deployment'
-	);
-
-$pre_deploy = new PreDeploy($pre_deploy_options);
-
-$pre_deploy->prep_website_dir();
-$pre_deploy->prep_git_dir();
-$pre_deploy->clone_git_repo();
-$pre_deploy->update_git_config();
-$pre_deploy->move_git_from_working_tree();
-$pre_deploy->move_workingtree();
-$pre_deploy->final_cleanup();
-
-?>
+} ?>
