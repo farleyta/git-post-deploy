@@ -3,13 +3,6 @@
 class Deploy {
 
 	/**
-	* A callback function to call after the deploy has finished.
-	* 
-	* @var callback
-	*/
-	public $post_deploy;
-
-	/**
 	* The directory where your website is located. Must be an absolute path.
 	* 
 	* @var string
@@ -225,11 +218,6 @@ class Deploy {
 			// Update the local repository
 			exec('GIT_DIR='.$this->_git_dir.' git pull '.$this->_remote.' '.$this->_branch, $output);
 			$this->log('Pulling in changes... '.implode(' ', $output));
-
-			if (is_callable($this->post_deploy))
-			{
-				call_user_func($this->post_deploy, $this->_data);
-			}
 
 			$this->log('Deployment successful.');
 		}

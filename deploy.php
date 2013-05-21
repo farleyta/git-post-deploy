@@ -28,15 +28,6 @@ $deployment_options = array(
 
 $deploy = new Deploy($deployment_options);
 
-
-// POST-DEPLOY FUNCTION
-// Not yet tested, but based on http://brandonsummers.name/blog/2012/02/10/using-bitbucket-for-automated-deployments/
-$deploy->post_deploy = function() use ($deploy) {
-  
-  // Add something that you want to do after the deployment here
-  
-};
-
 $deploy->execute();
 
 ?>
