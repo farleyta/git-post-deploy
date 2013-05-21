@@ -1,5 +1,9 @@
 <?php
 
+// Set default time zone. 
+// List here: http://www.php.net/manual/en/timezones.america.php
+date_default_timezone_set('America/Lima');
+
 // The location of the home directory of the server - all else is relative to this
 $base_dir = '/home/oregano/'; //INCLUDE TRAILING SLASH
 
