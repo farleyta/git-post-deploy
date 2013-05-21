@@ -1,19 +1,30 @@
 <?php
 
-//TODO : Change the pre-deployment.php script to setup the DeployClass file and
-// add this php to the public_html files...
+// The location of the home directory of the server - all else is relative to this
+$base_dir = '/home/oregano/'; //INCLUDE TRAILING SLASH
 
 // This file must be present for the auto-deploy to work
-require_once('/home/oregano/deployment/DeployClass.php');
+require_once( $base_dir . 'deployment/DeployClass.php');
 
 $deployment_options = array(
-		'website_dir' 		=> '/home/oregano/public_html',
-		'git_dir' 			=> '/home/oregano/git_repos/oregano-website.git',
-		'logfiles_dir'		=> '/home/oregano/deployment'
+		'website_dir' 		=>  $base_dir . 'public_html',
+		'git_dir' 			=>  $base_dir . 'git_repos/oregano-website.git',
+		'logfiles_dir'		=>  $base_dir . 'deployment',
+
+		// below are the default values of all other possible options
+		//  probably no need to change these often
+		
+		'log' 				=>  'deployments.log', // name of the logfile
+		'max_log_size' 		=>  10000, // in bytes = 10KB
+		'date_format' 		=>  'Y-m-d H:i:sP',
+		'repo_ipaddr' 		=>  '63.246.22.222',
+		'branch' 			=>  'master',
+		'remote' 			=>  'origin'
 	);
 
 $deploy = new Deploy($deployment_options);
 
 $deploy->execute();
+
 
 ?>
