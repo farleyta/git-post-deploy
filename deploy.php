@@ -16,10 +16,10 @@ $deployment_options = array(
 		
 		'log' 				=>  'deployments.log', // name of the logfile
 		'max_log_size' 		=>  10000, // in bytes = 10KB
-		'date_format' 		=>  'Y-m-d H:i:sP',
-		'repo_ipaddr' 		=>  '63.246.22.222',
-		'branch' 			=>  'master',
-		'remote' 			=>  'origin'
+		'date_format' 		=>  'Y-m-d H:i:sP', // default date_format
+		'repo_ipaddr' 		=>  '63.246.22.222', // BitBucket's POST service IP
+		'branch' 			=>  'master', //default branch
+		'remote' 			=>  'origin' //default remote alias
 	);
 
 $deploy = new Deploy($deployment_options);
