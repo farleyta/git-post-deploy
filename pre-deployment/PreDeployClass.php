@@ -1,9 +1,5 @@
 <?php 
 
-// Set default time zone. 
-// List here: http://www.php.net/manual/en/timezones.america.php
-date_default_timezone_set('America/Lima');
-
 class PreDeploy {
 
 	/**
@@ -38,12 +34,26 @@ class PreDeploy {
 	private $_logfiles_dir;
 
 	/**
+	* The absolute URL to the /deployment directory, where DeployClass.php will live
+	* 
+	* @var string
+	*/
+	private $_deploy_logfiles_dir;
+
+	/**
 	* The name of the file that will be used for logging deployments. Set to 
 	* FALSE to disable logging.
 	* 
 	* @var string
 	*/
 	private $_log = 'pre-deployment.log';
+
+	/**
+	* The absolute URL to the DeployClass.php file
+	* 
+	* @var string
+	*/
+	private $_deploy_class = 'https://raw.github.com/farleyta/git-post-deploy/master/DeployClass.php';
 
 	/**
 	* The max filesize of the log file, in bytes.
@@ -67,7 +77,7 @@ class PreDeploy {
 	*/
 	public function __construct($options = array()) {
 
-		$available_options = array('hosted_repo_dir', 'website_dir', 'git_dir', 'logfiles_dir', 'log', 'date_format', 'deploy_class', 'deploy_logfiles_dir');
+		$available_options = array('hosted_repo_dir', 'website_dir', 'git_dir', 'logfiles_dir', 'deploy_logfiles_dir', 'log', 'deploy_class', 'max_log_size', 'date_format');
 
 		foreach ($options as $option => $value) {
 			if (in_array($option, $available_options)) {
@@ -76,7 +86,7 @@ class PreDeploy {
 		}
 
 		// Some of the options are required, display an error if they're missing
-		if ( empty($this->_hosted_repo_dir) || empty($this->_website_dir) || empty($this->_git_dir) || empty($this->_logfiles_dir) ) {
+		if ( empty($this->_hosted_repo_dir) || empty($this->_website_dir) || empty($this->_git_dir) || empty($this->_logfiles_dir) || empty($this->_deploy_logfiles_dir) ) {
 			die("FATAL ERROR: Missing necessary arguments...\n");
 		} else {
 			$this->log('---------------------------', 'INITIALIZE');
