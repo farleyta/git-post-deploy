@@ -12,6 +12,27 @@ class Deploy {
 	public $post_deploy;
 
 	/**
+	* The directory where your website is located. Must be an absolute path.
+	* 
+	* @var string
+	*/
+	private $_website_dir;
+
+	/**
+	* The directory where your website is located. Must be an absolute path.
+	* 
+	* @var string
+	*/
+	private $_git_dir;
+
+	/**
+	* The directory where the log file and this Class file should live. Must be an absolute path.
+	* 
+	* @var string
+	*/
+	private $_logfiles_dir;
+
+	/**
 	* The name of the file that will be used for logging deployments. Set to 
 	* FALSE to disable logging.
 	* 
@@ -56,14 +77,6 @@ class Deploy {
 	private $_remote = 'origin';
 
 	/**
-	* The directory where your website and git repository are located, can be 
-	* a relative or absolute path
-	* 
-	* @var string
-	*/
-	private $_directory;
-
-	/**
 	* Sets up defaults.
 	* 
 	* @param  string  $directory  Directory where your website is located
@@ -71,7 +84,7 @@ class Deploy {
 	*/
 	public function __construct($options = array()) {
 
-		$available_options = array('website_dir', 'git_dir', 'logfiles_dir', 'log', 'date_format', 'branch', 'remote');
+		$available_options = array('website_dir', 'git_dir', 'logfiles_dir', 'log', 'max_log_size', 'date_format', 'repo_ipaddr', 'branch', 'remote');
 
 		foreach ($options as $option => $value) {
 			if (in_array($option, $available_options)) {
